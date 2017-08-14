@@ -84,18 +84,36 @@ namespace Task11
 
     class Program
     {
+        public static bool Exit() // выход из программы
+        {
+            WriteLine("Желаете начать сначала или нет? \nВведите да или нет");
+            var word = Convert.ToString(ReadLine()); // ответ пользователя
+            Clear();
+            if (word == "да" || word == "Да" || word == "ДА")
+            {
+                Clear();
+                return false;
+            }
+            Clear();
+            WriteLine("Вы ввели 'нет' или что-то непонятное. Нажмите любую клавишу, чтобы выйти из программы.");
+            ReadKey();
+            return true;
+        }
+
         static void Main(string[] args)
         {
-            WriteLine("Введите текст:");
-            string text = ReadLine();
-
-            WriteLine("Введите число N (Количество символов, на которое сдвинется шифруемый текст. " +
-                              "\nПоложительное число - сдвиг вправо), отрицательное - сдвиг влево):");
-            int n = Action.Input();
-            
-            string newtxt = Action.Encryption(text, n); // зашифровка
-            WriteLine(newtxt); // вывод текста
-            Read();
+            bool okay;
+            do
+            {
+                WriteLine("Введите текст:");
+                string text = ReadLine();
+                WriteLine("Введите число N (Количество символов, на которое сдвинется шифруемый текст. " +
+                          "\nПоложительное число - сдвиг вправо), отрицательное - сдвиг влево):");
+                int n = Action.Input();
+                string newtxt = Action.Encryption(text, n); // зашифровка
+                WriteLine(newtxt); // вывод текста
+                okay = Exit();
+            } while (!okay);
         }
     }
 }
