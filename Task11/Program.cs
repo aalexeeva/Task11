@@ -5,21 +5,21 @@ namespace Task11
 {
     class Action
     {
-        static readonly string alphabetRU = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"; 
-        static readonly string alphabetENG = "abcdefghijklmnopqrstuvwxyz";
-        static readonly string symbols = @"!&.,?/\*^$#@№;%:()-_=+1234567890";
+        private const string AlphabetRu = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"; // русский алфавит
+        private const string AlphabetEng = "abcdefghijklmnopqrstuvwxyz"; // английский алфавит
+        private const string Symbols = @"!&.,?/\*^$#@№;%:()-_=+1234567890"; // символы
 
-        static char Encode(char c, int n, bool lang) // кодирование элемента
+        private static char Encode(char c, int n, bool lang) // кодирование элемента
         {
             return lang
-                ? alphabetRU[(alphabetRU.IndexOf(c) + n) % alphabetRU.Length] // для русского алфавита
-                : alphabetENG[(alphabetENG.IndexOf(c) + n) % alphabetENG.Length]; // для английского алфавита
+                ? AlphabetRu[(AlphabetRu.IndexOf(c) + n) % AlphabetRu.Length] // для русского алфавита
+                : AlphabetEng[(AlphabetEng.IndexOf(c) + n) % AlphabetEng.Length]; // для английского алфавита
         }
 
         public static int Input() // ввод числа N
         {
-            int number = 0;
-            bool ok;
+            var number = 0; // переменная для числа
+            bool ok; // показатель корректности ввода
             do
             {
                 try
@@ -41,7 +41,7 @@ namespace Task11
             return number;
         }
 
-        public static int NConvert(int number, int length) // перевод числа N в корректный формат в зависимости от алфавита
+        private static int NConvert(int number, int length) // перевод числа N в корректный формат в зависимости от алфавита
         {
             number = number % length;
             if (number < 0) number = length + number;
@@ -50,34 +50,27 @@ namespace Task11
 
         public static string Encryption(string text, int n) // кодировка
         {
-            string newtxt = String.Empty; // переменная для закодированного текста
-            int length = 0; // длина алфавита
-            bool lang = true; // переменная для выбора алфавита
-            foreach (char t in text)
+            var newtxt = string.Empty; // переменная для закодированного текста
+            var length = 0; // длина алфавита
+            var lang = true; // переменная для выбора алфавита
+            foreach (var t in text)
             {
-                if (!alphabetRU.Contains(t.ToString())) // определение алфавита
+                if (!AlphabetRu.Contains(t.ToString())) // определение алфавита
                 {
                     lang = false;
-                    length = alphabetENG.Length;
+                    length = AlphabetEng.Length;
                     break;
                 }
-                else
-                {
-                    lang = true;
-                    length = alphabetRU.Length;
-                    break;
-                }
+                length = AlphabetRu.Length;
+                break;
             }
-
             n = NConvert(n, length); // перевод N в корректный формат
-
-            foreach (char t in text) // зашифровка
+            foreach (var t in text) // зашифровка
             {
-                if (t != ' ' || !symbols.Contains(t.ToString()))
+                if (t != ' ' || !Symbols.Contains(t.ToString()))
                     newtxt += Encode(t, n, lang);
                 else newtxt += t;
             }
-
             return newtxt;
         }
     }
@@ -106,11 +99,11 @@ namespace Task11
             do
             {
                 WriteLine("Введите текст:");
-                string text = ReadLine();
+                var text = ReadLine();
                 WriteLine("Введите число N (Количество символов, на которое сдвинется шифруемый текст. " +
                           "\nПоложительное число - сдвиг вправо), отрицательное - сдвиг влево):");
-                int n = Action.Input();
-                string newtxt = Action.Encryption(text, n); // зашифровка
+                var n = Action.Input();
+                var newtxt = Action.Encryption(text, n); // зашифровка
                 WriteLine(newtxt); // вывод текста
                 okay = Exit();
             } while (!okay);
