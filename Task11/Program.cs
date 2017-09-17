@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using static System.Console;
 
 namespace Task11
@@ -53,21 +54,57 @@ namespace Task11
             var newtxt = string.Empty; // переменная для закодированного текста
             var length = 0; // длина алфавита
             var lang = true; // переменная для выбора алфавита
-            foreach (var t in text)
+            var ok = true; // переменная, определяющая конфликт алфавитов 
+            var firstAlp = true; // переменная для алфавита, которому принадлежит первый символ
+            for(var i = 0; i < text.Length; i++) // проверка конфликта алфавитов
             {
-                if (!AlphabetRu.Contains(t.ToString())) // определение алфавита
+                if (i == 0 && text[0] != ' ' && !Symbols.Contains(text[0].ToString())) firstAlp = AlphabetRu.Contains(text[0].ToString()); // определение алфавита
+                else if (i == 0)
                 {
+                    var check = false;
+                    do
+                    {
+                        i++;
+                        if (i >= text.Length) return "Нечего кодировать";
+                        if (text[i] == ' ' || Symbols.Contains(text[i].ToString())) continue;
+                        firstAlp = AlphabetRu.Contains(text[i].ToString());
+                        check = true;
+                    } while (!check || i >= text.Length);
+                }
+                if (firstAlp) // проверка соответствия остальных символов алфавиту первого
+                {
+                    if (text[i] != ' ' && !Symbols.Contains(text[i].ToString()) && AlphabetRu.Contains(text[i].ToString())) continue;
+                    ok = false;
+                    break;
+                }
+                if (text[i] != ' ' && !Symbols.Contains(text[i].ToString()) && AlphabetEng.Contains(text[i].ToString())) continue;
+                if (text[i] != ' ' && !Symbols.Contains(text[i].ToString())) ok = false;
+                break;
+            }
+            if (!ok) return "Конфликт алфавитов"; // если найден конфликт - вывод сообщения об этом
+            var okay = true;
+            for(var i = 0; i < text.Length; i++)
+            {
+                if (text[i] != ' ' && !Symbols.Contains(text[i].ToString()) && !AlphabetRu.Contains(text[i].ToString())) // определение алфавита
+                {
+                    okay = true;
                     lang = false;
                     length = AlphabetEng.Length;
                     break;
                 }
-                length = AlphabetRu.Length;
-                break;
+                if (text[i] != ' ' && !Symbols.Contains(text[i].ToString()) && AlphabetRu.Contains(text[i].ToString()))
+                {
+                    okay = true;
+                    length = AlphabetRu.Length;
+                    break;
+                }
+                if (i == text.Length - 1) okay = false;
             }
+            if (!okay) return "Нечего кодировать";
             n = NConvert(n, length); // перевод N в корректный формат
             foreach (var t in text) // зашифровка
             {
-                if (t != ' ' || !Symbols.Contains(t.ToString()))
+                if (t != ' ' && !Symbols.Contains(t.ToString()))
                     newtxt += Encode(t, n, lang);
                 else newtxt += t;
             }
